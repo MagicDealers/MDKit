@@ -106,15 +106,32 @@ extension URLRequest {
         var components = [(String, String)]()
         
         parameters.forEach {
-            
-            guard let value = $1 as? String else {
-                fatalError("Logic to encode \(type(of: $1)) is not yet implemented.")
-            }
-            
-            components.append((escape($0), escape(value)))
+            components += queryComponent(from: $0, value: $1)
         }
         
         return components.map { "\($0)=\($1)" }.joined(separator: "&")
+    }
+    
+    private static func queryComponent(from key: String, value: Any) -> [(String, String)] {
+        
+        var components = [(String, String)]()
+        
+        switch value {
+            
+        case let array as [Any]:
+            fatalError("Logic to encode >> \(type(of: array)) << is not yet implemented.")
+
+        case let dictionary as [String: Any]:
+            fatalError("Logic to encode >> \(type(of: dictionary)) << is not yet implemented.")
+            
+        case let bool as Bool:
+            fatalError("Logic to encode >> \(type(of: bool)) << is not yet implemented.")
+
+        default:
+            components.append((escape(key), escape("\(value)")))
+        }
+        
+        return components
     }
     
     private static func escape(_ string: String) -> String {
